@@ -1,40 +1,53 @@
-# شبکه عصبی تابع پایه شعاعی (RBFNN)
+# Radial Basis Function Neural Network (RBFNN) - Python Implementation
 
-این کد شامل پیاده‌سازی ساده‌ای از یک شبکه عصبی تابع پایه شعاعی (RBFNN) برای حل مسئله XOR است. این شبکه از تابع گاوسی به‌عنوان تابع پایه استفاده کرده و با استفاده از کتابخانه‌های `NumPy` و `Matplotlib` از ابتدا پیاده‌سازی شده است.
+This project implements a basic Radial Basis Function Neural Network (RBFNN) in Python using NumPy and Matplotlib. The network is designed to learn and predict outputs for simple datasets, particularly the XOR dataset, by mapping input vectors to outputs using radial basis functions (Gaussian functions).
 
-## ویژگی‌ها
+## About RBFNN
 
-- معماری RBFNN با استفاده از توابع پایه گاوسی
-- قابلیت تنظیم مقدار پهنای تابع گاوسی (`sigma`)
-- طبقه‌بندی مجموعه داده XOR
-- محاسبه خطای میانگین مربعات (MSE)
-- نمایش نتایج پیش‌بینی به صورت گرافیکی
+The Radial Basis Function Neural Network (RBFNN) is a type of artificial neural network that uses radial basis functions as activation functions. Each neuron in the hidden layer has a radial basis function centered on a particular point, known as a center, and outputs a value based on the distance between the input and the center. RBFNNs are particularly useful for function approximation tasks and can learn complex mappings from inputs to outputs. Here, the network is trained to approximate the XOR function.
 
-## بررسی کد
+## Code Structure
 
-### کلاس: `RBFNN`
+The implementation consists of the following components:
 
-- `__init__(self, sigma)`: مقدار `sigma` (پهنای تابع گاوسی) را مقداردهی کرده و مراکز از پیش تعریف‌شده را تنظیم می‌کند.
-- `_gaussian(self, x, c)`: تابع پایه گاوسی را بین ورودی `x` و مرکز `c` محاسبه می‌کند.
-- `_calculate_activation(self, X)`: فعال‌سازی تمامی نقاط داده در `X` برای هر مرکز را محاسبه می‌کند.
-- `fit(self, X, y)`: مدل RBFNN را با محاسبه وزن‌ها با استفاده از روش شبه‌معکوس آموزش می‌دهد.
-- `predict(self, X)`: از مدل آموزش‌دیده برای پیش‌بینی خروجی ورودی‌های `X` استفاده می‌کند.
+### 1. **Class `RBFNN`**
 
-### مثال استفاده
+   - `__init__(self, sigma)`: Initializes the RBFNN model with a specific `sigma` parameter (controls the spread of the Gaussian function) and predefined centers for the RBFs.
+   - `_gaussian(self, x, c)`: Computes the Gaussian activation for a given input `x` and center `c`.
+   - `_calculate_activation(self, X)`: Calculates the activations for all inputs in `X` based on the predefined centers.
+   - `fit(self, X, y)`: Trains the network by calculating the optimal weights to minimize the error between predicted and target values.
+   - `predict(self, X)`: Uses the trained weights to predict the outputs for new inputs in `X`.
+
+### 2. **Example usage (XOR problem)**
+
+   - Defines a simple XOR dataset and initializes the RBFNN model with `sigma = 0.1`.
+   - Trains the model using the `fit` function.
+   - Uses `predict` to generate predictions for the inputs and calculates the Mean Squared Error (MSE).
+   - Visualizes the results using Matplotlib.
+
+## Usage Example
 
 ```python
-# تعریف مجموعه داده XOR
+# Define XOR dataset
 X = np.array([[0.1, 0.1], [0.1, 0.9], [0.9, 0.1], [0.9, 0.9]])
 y = np.array([0, 1, 1, 0])
 
-# مقداردهی و آموزش RBFNN
+# Initialize and train RBFNN
 rbfnn = RBFNN(sigma=0.1)
 rbfnn.fit(X, y)
 
-# پیش‌بینی
+# Predict
 predictions = rbfnn.predict(X)
-print("پیش‌بینی‌ها:", predictions)
+print("Predictions:", predictions)
 
-# محاسبه خطای میانگین مربعات
+# Calculate mean squared error
 mse = np.mean((predictions - y) ** 2)
-print("خطای میانگین مربعات:", mse)
+print("Mean Squared Error:", mse)
+
+# Plot the results
+plt.scatter(X[:, 0], X[:, 1], c=predictions, cmap='viridis')
+plt.colorbar(label='Predicted Output')
+plt.xlabel('X1')
+plt.ylabel('X2')
+plt.title('RBFNN Predictions for XOR ')
+plt.show()
