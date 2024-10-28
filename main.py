@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 
+
 class RBFNN():
     def __init__(self, sigma, n_centers):
         self.sigma = sigma
@@ -25,12 +26,13 @@ class RBFNN():
         kmeans.fit(X)
         self.centers = kmeans.cluster_centers_
         activations = self._calculate_activation(X)
-        self.weights = np.linalg.pinv(activations.T @ activations) @ activations.T @ y
+        self.weights = np.linalg.pinv(
+            activations.T @ activations) @ activations.T @ y
 
     def predict(self, X):
         if self.weights is None:
             raise ValueError("Model not trained yet. Call fit method first.")
-        
+
         activations = self._calculate_activation(X)
         return activations @ self.weights
 
@@ -46,10 +48,13 @@ if __name__ == "__main__":
         [0.6, 0.2], [0.2, 0.6], [0.8, 0.8], [0.25, 0.85],
         [0.85, 0.25]
     ])
-    y_original = np.array([0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 
-                        0, 1, 1, 0, 1, 0, 1, 0, 1, 1])
+    y_original = np.array([
+        0, 1, 1, 0, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 0, 0, 0, 1, 1,
+        0, 1, 0, 1, 0, 1, 1
+    ])
 
-    np.random.seed(0) 
+    np.random.seed(0)
     n_repeats = 4
     X_repeated = np.tile(X_original, (n_repeats, 1))
     y = np.tile(y_original, n_repeats)
@@ -59,9 +64,10 @@ if __name__ == "__main__":
     X = X_repeated + noise
 
     # تقسیم داده‌ها به آموزش و تست با نسبت 80/20
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=0)
 
-    rbfnn = RBFNN(sigma=0.3, n_centers=50)
+    rbfnn = RBFNN(sigma=0.3, n_centers=25)
     rbfnn.fit(X_train, y_train)
 
     # پیش‌بینی بر روی داده‌های آموزشی
@@ -74,8 +80,10 @@ if __name__ == "__main__":
     test_mse = np.mean((test_predictions - y_test) ** 2)
     print("Test Mean Squared Error:", test_mse)
 
-    plt.scatter(X_train[:, 0], X_train[:, 1], c=train_predictions, cmap='viridis', marker='o', label='Train Data')
-    plt.scatter(X_test[:, 0], X_test[:, 1], c=test_predictions, cmap='viridis', marker='x', label='Test Data')
+    plt.scatter(X_train[:, 0], X_train[:, 1], c=train_predictions,
+                cmap='viridis', marker='o', label='Train Data')
+    plt.scatter(X_test[:, 0], X_test[:, 1], c=test_predictions,
+                cmap='viridis', marker='x', label='Test Data')
     plt.colorbar(label='Predicted Output')
     plt.xlabel('X1')
     plt.ylabel('X2')
