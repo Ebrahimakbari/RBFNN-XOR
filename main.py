@@ -83,9 +83,9 @@ if __name__ == "__main__":
     print("Test MSE:", test_mse)
 
     plt.scatter(X_train[:, 0], X_train[:, 1], c=train_predictions,
-                cmap='viridis', marker='o', label='Train Data')
+                cmap='coolwarm', marker='o', label='Train Data')
     plt.scatter(X_test[:, 0], X_test[:, 1], c=test_predictions,
-                cmap='viridis', marker='x', label='Test Data')
+                cmap='coolwarm', marker='x', label='Test Data')
     plt.colorbar(label='Predicted Output')
     plt.xlabel('X1')
     plt.ylabel('X2')
