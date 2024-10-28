@@ -1,53 +1,96 @@
-# Radial Basis Function Neural Network (RBFNN) - Python Implementation
+# Explain:
 
-This project implements a basic Radial Basis Function Neural Network (RBFNN) in Python using NumPy and Matplotlib. The network is designed to learn and predict outputs for simple datasets, particularly the XOR dataset, by mapping input vectors to outputs using radial basis functions (Gaussian functions).
-
-## About RBFNN
-
-The Radial Basis Function Neural Network (RBFNN) is a type of artificial neural network that uses radial basis functions as activation functions. Each neuron in the hidden layer has a radial basis function centered on a particular point, known as a center, and outputs a value based on the distance between the input and the center. RBFNNs are particularly useful for function approximation tasks and can learn complex mappings from inputs to outputs. Here, the network is trained to approximate the XOR function.
-
-## Code Structure
-
-The implementation consists of the following components:
-
-### 1. **Class `RBFNN`**
-
-   - `__init__(self, sigma)`: Initializes the RBFNN model with a specific `sigma` parameter (controls the spread of the Gaussian function) and predefined centers for the RBFs.
-   - `_gaussian(self, x, c)`: Computes the Gaussian activation for a given input `x` and center `c`.
-   - `_calculate_activation(self, X)`: Calculates the activations for all inputs in `X` based on the predefined centers.
-   - `fit(self, X, y)`: Trains the network by calculating the optimal weights to minimize the error between predicted and target values.
-   - `predict(self, X)`: Uses the trained weights to predict the outputs for new inputs in `X`.
-
-### 2. **Example usage (XOR problem)**
-
-   - Defines a simple XOR dataset and initializes the RBFNN model with `sigma = 0.1`.
-   - Trains the model using the `fit` function.
-   - Uses `predict` to generate predictions for the inputs and calculates the Mean Squared Error (MSE).
-   - Visualizes the results using Matplotlib.
-
-## Usage Example
+### 1. Importing Libraries
 
 ```python
-# Define XOR dataset
-X = np.array([[0.1, 0.1], [0.1, 0.9], [0.9, 0.1], [0.9, 0.9]])
-y = np.array([0, 1, 1, 0])
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
+```
 
-# Initialize and train RBFNN
-rbfnn = RBFNN(sigma=0.1)
-rbfnn.fit(X, y)
+- `numpy`: Handles array operations and data management.
+- `matplotlib.pyplot`: Provides data visualization capabilities.
+- `KMeans` from `sklearn.cluster`: Used to perform clustering on input data to determine the Gaussian function centers.
+- `train_test_split` from `sklearn.model_selection`: Splits the dataset into training and test sets.
 
-# Predict
-predictions = rbfnn.predict(X)
-print("Predictions:", predictions)
+### 2. RBFNN Class Definition
 
-# Calculate mean squared error
-mse = np.mean((predictions - y) ** 2)
-print("Mean Squared Error:", mse)
+This class defines the core structure and methods of the RBFNN model.
 
-# Plot the results
-plt.scatter(X[:, 0], X[:, 1], c=predictions, cmap='viridis')
-plt.colorbar(label='Predicted Output')
-plt.xlabel('X1')
-plt.ylabel('X2')
-plt.title('RBFNN Predictions for XOR ')
-plt.show()
+#### `__init__(self, sigma, n_centers)`
+
+The constructor initializes the RBFNN with parameters:
+
+- **`sigma`**: Defines the width of the Gaussian function. It controls the spread of each RBF neuron and thus the influence of each neuron over the input space.
+- **`n_centers`**: Number of Gaussian centers (i.e., RBF neurons). These centers represent the prototypes for clusters in the input data space.
+- **`centers`** and **`weights`**: Initialized as `None`, these attributes will be set during training. `centers` stores the Gaussian centers, while `weights` represents the linear weights applied to the output of the Gaussian neurons.
+
+```python
+class RBFNN():
+    def __init__(self, sigma, n_centers):
+        self.sigma = sigma
+        self.n_centers = n_centers
+        self.centers = None
+        self.weights = None
+```
+
+#### `_gaussian(self, x, c)`
+
+This private method calculates the output of a Gaussian function for a given input `x` and center `c`. It uses the Euclidean distance between `x` and `c` to compute the Gaussian response, which is high when `x` is near `c`.
+
+```python
+def _gaussian(self, x, c):
+    return np.exp(-np.linalg.norm(x - c) ** 2 / (2 * self.sigma ** 2))
+```
+
+#### `_calculate_activation(self, X)`
+
+This private method computes the activation matrix for a given dataset `X`. Each row in the matrix corresponds to a data point, and each column represents the activation output of a Gaussian function centered at one of the centers.
+
+```python
+def _calculate_activation(self, X):
+    activations = np.zeros((X.shape[0], self.centers.shape[0]))
+    for i, center in enumerate(self.centers):
+        for j, x in enumerate(X):
+            activations[j, i] = self._gaussian(x, center)
+    return activations
+```
+
+#### `fit(self, X, y)`
+
+The fit method trains the RBFNN model by performing the following steps:
+1. **KMeans Clustering**: Clusters the input data `X` to determine Gaussian centers.
+2. **Activation Calculation**: Computes the activation matrix for `X` based on the selected centers.
+3. **Weight Calculation**: Uses the pseudo-inverse of the activation matrix to calculate the weights, minimizing the mean squared error between the model predictions and the target values `y`.
+
+```python
+def fit(self, X, y):
+    kmeans = KMeans(n_clusters=self.n_centers, random_state=0)
+    kmeans.fit(X)
+    self.centers = kmeans.cluster_centers_
+    activations = self._calculate_activation(X)
+    self.weights = np.linalg.pinv(
+        activations.T @ activations) @ activations.T @ y
+```
+
+#### `predict(self, X)`
+
+Generates predictions for new input data `X` using the trained model. If the model hasn’t been trained, it raises an error. This method also utilizes the activation matrix for `X` and applies the weights computed during training.
+
+```python
+def predict(self, X):
+    if self.weights is None:
+        raise ValueError('''
+                Model not trained yet. Call fit method first.
+        ''')
+
+    activations = self._calculate_activation(X)
+    return activations @ self.weights
+```
+
+## Summary
+
+This RBFNN implementation demonstrates how radial basis functions can effectively approximate complex, non-linear patterns. The model identifies clusters in input data and places Gaussian functions at these clusters to produce a flexible approximation of the target function. 
+
+The RBFNN is particularly suited for regression and classification problems, where clustering can help identify local patterns within the data. The combination of clustering and linear regression on the output layer provides the RBFNN model with the power to generalize well with sufficient training data.
