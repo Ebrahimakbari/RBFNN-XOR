@@ -63,7 +63,7 @@ if __name__ == "__main__":
     noise = np.random.uniform(-0.02, 0.02, X_repeated.shape)
     X = X_repeated + noise
 
-    # تقسیم داده‌ها به آموزش و تست با نسبت 80/20
+    # تقسیم داده‌ها به آموزش و تست با نسبت 70/30
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=0)
 
