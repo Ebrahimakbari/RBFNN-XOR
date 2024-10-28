@@ -31,7 +31,9 @@ class RBFNN():
 
     def predict(self, X):
         if self.weights is None:
-            raise ValueError("Model not trained yet. Call fit method first.")
+            raise ValueError('''
+                    Model not trained yet. Call fit method first.
+            ''')
 
         activations = self._calculate_activation(X)
         return activations @ self.weights
@@ -49,9 +51,9 @@ if __name__ == "__main__":
         [0.85, 0.25]
     ])
     y_original = np.array([
-        0, 1, 1, 0, 0, 1, 1, 1, 1,
-        1, 1, 1, 1, 0, 0, 0, 1, 1,
-        0, 1, 0, 1, 0, 1, 1
+        0, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 0, 0, 0, 1,1,0, 1, 0,
+        1, 0, 1, 1
     ])
 
     np.random.seed(0)
