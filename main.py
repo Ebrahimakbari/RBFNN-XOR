@@ -73,12 +73,12 @@ if __name__ == "__main__":
     # پیش‌بینی بر روی داده‌های آموزشی
     train_predictions = rbfnn.predict(X_train)
     train_mse = np.mean((train_predictions - y_train) ** 2)
-    print("Training Mean Squared Error:", train_mse)
+    print("Training MSE:", train_mse)
 
     # پیش‌بینی بر روی داده‌های تست
     test_predictions = rbfnn.predict(X_test)
     test_mse = np.mean((test_predictions - y_test) ** 2)
-    print("Test Mean Squared Error:", test_mse)
+    print("Test MSE:", test_mse)
 
     plt.scatter(X_train[:, 0], X_train[:, 1], c=train_predictions,
                 cmap='viridis', marker='o', label='Train Data')
