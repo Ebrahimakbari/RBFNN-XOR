@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # تقسیم داده‌ها به آموزش و تست با نسبت 80/20
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    rbfnn = RBFNN(sigma=0.4, n_centers=50)
+    rbfnn = RBFNN(sigma=0.3, n_centers=50)
     rbfnn.fit(X_train, y_train)
 
     # پیش‌بینی بر روی داده‌های آموزشی
