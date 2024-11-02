@@ -12,10 +12,13 @@ class RBFNN():
         self.weights = None
 
     def _gaussian(self, x, c):
-        return np.exp(-np.linalg.norm(x - c) ** 2 / (2 * self.sigma ** 2))
+        return np.exp(
+            -np.linalg.norm(x - c) ** 2 / (2 * self.sigma ** 2)
+            )
 
     def _calculate_activation(self, X):
-        activations = np.zeros((X.shape[0], self.centers.shape[0]))
+        activations = np.zeros(
+            (X.shape[0], self.centers.shape[0]))
         for i, center in enumerate(self.centers):
             for j, x in enumerate(X):
                 activations[j, i] = self._gaussian(x, center)
@@ -40,7 +43,8 @@ class RBFNN():
     
     def predict(self, X, threshold=None):
         if self.weights is None:
-            raise ValueError('Model not trained yet. Call fit method first.')
+            raise ValueError(
+                'Model not trained yet. Call fit method first.')
 
         activations = self._calculate_activation(X)
         predictions = activations @ self.weights
