@@ -46,7 +46,7 @@ class RBFNN():
         predictions = activations @ self.weights
         if threshold:
             return (predictions > threshold).astype(int)
-        return activations @ self.weights
+        return predictions
 
 
 
