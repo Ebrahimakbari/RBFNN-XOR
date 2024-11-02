@@ -37,6 +37,17 @@ class RBFNN():
 
         activations = self._calculate_activation(X)
         return activations @ self.weights
+    
+    def predict(self, X, threshold=None):
+        if self.weights is None:
+            raise ValueError('Model not trained yet. Call fit method first.')
+
+        activations = self._calculate_activation(X)
+        predictions = activations @ self.weights
+        if threshold:
+            return (predictions > threshold).astype(int)
+        return activations @ self.weights
+
 
 
 # Example usage:
@@ -76,11 +87,16 @@ if __name__ == "__main__":
     train_predictions = rbfnn.predict(X_train)
     train_mse = np.mean((train_predictions - y_train) ** 2)
     print("Training MSE:", train_mse)
+    # train_accuracy = np.mean(train_predictions == y_train)
+    # print("Training Accuracy:", train_accuracy)
+    
 
     # پیش‌بینی بر روی داده‌های تست
     test_predictions = rbfnn.predict(X_test)
     test_mse = np.mean((test_predictions - y_test) ** 2)
     print("Test MSE:", test_mse)
+    # test_accuracy = np.mean(test_predictions == y_test)
+    # print("Test Accuracy:", test_accuracy)
 
     plt.scatter(X_train[:, 0], X_train[:, 1], c=train_predictions,
                 cmap='coolwarm', marker='o', label='Train Data')
