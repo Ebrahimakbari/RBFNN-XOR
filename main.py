@@ -31,15 +31,6 @@ class RBFNN():
         activations = self._calculate_activation(X)
         self.weights = np.linalg.pinv(
             activations.T @ activations) @ activations.T @ y
-
-    def predict(self, X):
-        if self.weights is None:
-            raise ValueError('''
-                    Model not trained yet. Call fit method first.
-            ''')
-
-        activations = self._calculate_activation(X)
-        return activations @ self.weights
     
     def predict(self, X, threshold=None):
         if self.weights is None:
@@ -71,7 +62,7 @@ if __name__ == "__main__":
         1, 0, 1, 1
     ])
 
-    np.random.seed(0)
+    # np.random.seed(0)
     n_repeats = 4
     X_repeated = np.tile(X_original, (n_repeats, 1))
     y = np.tile(y_original, n_repeats)
